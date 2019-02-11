@@ -26,16 +26,17 @@ import java.util.List;
 import java.util.Map;
 
 import io.rocketpartners.J;
+import io.rocketpartners.utils.KVPair;
 
 public class UrlBuilder
 {
 
-   String       protocol = null;
-   String       host     = null;
-   Integer      port     = null;
-   String       path     = null;
+   String                       protocol = null;
+   String                       host     = null;
+   Integer                      port     = null;
+   String                       path     = null;
 
-   List<NVPair> query    = new ArrayList();
+   List<KVPair<String, String>> query    = new ArrayList();
 
    public UrlBuilder()
    {
@@ -74,7 +75,7 @@ public class UrlBuilder
 
       for (int i = 0; plist != null && i < plist.size(); i += 2)
       {
-         query.add(new NVPair(plist.get(i) + "", plist.get(i + 1) == null ? null : (plist.get(i + 1) + "")));
+         query.add(new KVPair(plist.get(i) + "", plist.get(i + 1) == null ? null : (plist.get(i + 1) + "")));
       }
    }
 
@@ -161,7 +162,7 @@ public class UrlBuilder
       Map<String, String> params = Url.parseQuery(queryString);
       for (String key : params.keySet())
       {
-         query.add(new NVPair(key, params.get(key)));
+         query.add(new KVPair(key, params.get(key)));
       }
       return this;
    }
@@ -170,7 +171,7 @@ public class UrlBuilder
    {
       try
       {
-         query.add(new NVPair(URLEncoder.encode(name, "UTF-8"), value != null ? URLEncoder.encode(value, "UTF-8") : null));
+         query.add(new KVPair(URLEncoder.encode(name, "UTF-8"), value != null ? URLEncoder.encode(value, "UTF-8") : null));
       }
       catch (Exception ex)
       {
@@ -187,11 +188,11 @@ public class UrlBuilder
          queryStr = "";
          for (int i = 0; i < query.size(); i++)
          {
-            NVPair pair = query.get(i);
+            KVPair pair = query.get(i);
             if (J.empty(pair.value))
-               queryStr += pair.name;
+               queryStr += pair.key;
             else
-               queryStr += pair.name + "=" + pair.value;
+               queryStr += pair.key + "=" + pair.value;
 
             if (i < query.size() - 1)
                queryStr += "&";
@@ -203,37 +204,4 @@ public class UrlBuilder
 
    }
 
-   public class NVPair
-   {
-      String name  = null;
-      String value = null;
-
-      public NVPair(String name, String value)
-      {
-         super();
-         this.name = name;
-         this.value = value;
-      }
-
-      public String getName()
-      {
-         return name;
-      }
-
-      public void setName(String name)
-      {
-         this.name = name;
-      }
-
-      public String getValue()
-      {
-         return value;
-      }
-
-      public void setValue(String value)
-      {
-         this.value = value;
-      }
-
-   }
 }
